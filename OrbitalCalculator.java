@@ -60,14 +60,14 @@ public class OrbitalCalculator {
     public void output(double force, double velocity, double orbitalVel, double orbitalPer) {
 
         DecimalFormat df = new DecimalFormat("0.000e0"); /*/ Scientific notation with 3 digits past the decimal 
-        for the gravitational force*/
+        for the gravitational force. Zeros are placeholders for the digits*/
         df.setPositivePrefix(""); // Removes '+' sign for positive numbers
         df.setNegativePrefix("-"); // Adds '-' sign for negative numbers
 
         DecimalFormat velFormat = new DecimalFormat("0.000000"); /* Fixed 6 digits past the decimal notation format for 
-        the orbital and escape velocities*/
+        the orbital and escape velocities. Zeros are placeholders for the digits*/
         DecimalFormat perFormat = new DecimalFormat("0.000"); /* Fixed 3 digits past the decimal notation format for 
-        the periods*/
+        the periods. Zeros are placeholders for the digits*/
 
         System.out.println("\n--- Results ---" + "\n"
         + "\n\tGravitational Force: " + df.format(force)  + " N" // 3 digits past the decimal, e = scientific notation
