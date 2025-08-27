@@ -1,4 +1,6 @@
-import java.util.Scanner;
+import java.text.DecimalFormat; // Scanner class for user input
+import java.util.Scanner; // DecimalFormat class for formatting output
+
 
 public class OrbitalCalculator {
     private static final double G = 6.67430e-11; // Gravitational constant
@@ -14,12 +16,12 @@ public class OrbitalCalculator {
     }
 
     // Method to calculate escape velocity from the planet's surface
-    public double escapeVelocity(double mass, double Radius) {
+    public double escapeVelocity(double mass, double Radius) { // Radius = radius of the planet
         return Math.sqrt((2 * (G * mass)) / Radius);
     }
 
     // Method to calculate orbital velocity at a given radius
-    public double orbitalVelocity(double mass, double radius) {
+    public double orbitalVelocity(double mass, double radius) { // radius = orbital radius from the planet's center
         return Math.sqrt((G * mass) / radius);
     } 
 
@@ -38,9 +40,11 @@ public class OrbitalCalculator {
         if (mass <= 0 || radius < 0) {
             return 0; 
         }// Or throw an exception, depending on desired error handling.
+
+        double orbitalVelocity = orbitalVelocity(mass, radius);
         
         // Using Math.pow (power) for clarity when dealing with exponents.
-        return ((2 * Math.PI * radius) / (G * mass));
+        return ((2 * Math.PI * radius) / orbitalVelocity);
     }
 
     /*  Overloaded method to calculate orbital period at a given altitude above the planet's surface 
@@ -54,21 +58,24 @@ public class OrbitalCalculator {
     }
 
     public void output(double force, double velocity, double orbitalVel, double orbitalPer) {
-        System.out.println("--- Results ---"
-        + "\nGravitational Force: " + force + " N"
-        + "\nOrbital Period: " + orbitalPer + " seconds"
-        + "\nOrbital Velocity: " + orbitalVel + " m/s"
-        + "\nEscape Velocity: " + velocity + " m/s (from the planet's surface)"
-        + "\n--- End of Calculations ---" + "\n");   
 
-        /* Made this in case proffessor wants a specific decimal point output
-         * System.out.println("--- Results ---"
-        + "\nGravitational Force: " + String.format("%.2f", force) + " N"
-        + "\nOrbital Period: " + String.format("%.2f", orbitalPer) + " seconds"
-        + "\nOrbital Velocity: " + String.format("%.2f", orbitalVel) + " m/s"
-        + "\nEscape Velocity: " + String.format("%.2f", velocity) + " m/s (from the planet's surface)"
-        + "\n--- End of Calculations ---" + "\n");
-         */
+        DecimalFormat df = new DecimalFormat("0.000e0"); /*/ Scientific notation with 3 digits past the decimal 
+        for the gravitational force*/
+        df.setPositivePrefix(""); // Removes '+' sign for positive numbers
+        df.setNegativePrefix("-"); // Adds '-' sign for negative numbers
+
+        DecimalFormat velFormat = new DecimalFormat("0.000000"); /* Fixed 6 digits past the decimal notation format for 
+        the orbital and escape velocities*/
+        DecimalFormat perFormat = new DecimalFormat("0.000"); /* Fixed 3 digits past the decimal notation format for 
+        the periods*/
+
+        System.out.println("\n--- Results ---" + "\n"
+        + "\n\tGravitational Force: " + df.format(force)  + " N" // 3 digits past the decimal, e = scientific notation
+        + "\n\tOrbital Period: " + perFormat.format(orbitalPer) + " seconds" // 3 digits past the decimal, f = fixed/decimal notation
+        + "\n\tOrbital Velocity: " + velFormat.format(orbitalVel) + " m/s" // 6 digits past the decimal, f = fixed/decimal notation
+        + "\n\tEscape Velocity: " + velFormat.format(velocity) + " m/s (from the planet's surface)\n" /*/ 6 digits past the decimal, 
+        f = fixed/decimal notation */
+        + "\n--- End of Calculation ---" + "\n"); // New lines for better readability
     }
 
     public static void main(String[] sigma) {
@@ -98,18 +105,22 @@ public class OrbitalCalculator {
             }
 
             System.out.print("Enter the distance between the planet and the satellite/orbital altitude (in meters): ");
-            double distancePS = sc.nextDouble(); // in meters, Distance from the planet to the satellite AKA orbital altitude, user-defined
-            if (distancePS <= 0) {
+            double orbitalAlt = sc.nextDouble(); // in meters, Distance from the planet to the satellite AKA orbital altitude, user-defined
+            if (orbitalAlt <= 0) {
                 System.out.println("Error: Distance must be greater than zero.");
                 return; // Exit the program if the distance is invalid
             }
 
             //Calculations and Output
-            double distance = calculator.distPC(radiusPlanet, distancePS); // distance = Orbital Radius = planet radius + altitude
-            double force = calculator.gravityForce(massPlanet, massSatellite, distance); // force = Gravitational Force between the planet and the satellite
+            double orbitalRad = calculator.distPC(radiusPlanet, orbitalAlt); // distance = Orbital Radius = planet radius + altitude
+
+            double force = calculator.gravityForce(massPlanet, massSatellite, orbitalRad); // force = Gravitational Force between the planet and the satellite
+
             double escapeVel = calculator.escapeVelocity(massPlanet, radiusPlanet); // escapeVel = Escape Velocity from the planet's surface
-            double orbitalVelSat = calculator.orbitalVelocity(massPlanet, distance); // orbitalVelSat = Orbital Velocity of the satellite
-            double orbitalPeriodSat = calculator.orbitalPeriod(massPlanet, distancePS); // orbitalPeriodSat = Orbital Period of the satellite
+
+            double orbitalVelSat = calculator.orbitalVelocity(massPlanet, orbitalRad); // orbitalVelSat = Orbital Velocity of the satellite
+
+            double orbitalPeriodSat = calculator.orbitalPeriod(massPlanet, orbitalRad); // orbitalPeriodSat = Orbital Period of the satellite = 2π * orbital radius / orbital velocity
 
             calculator.output(force, escapeVel, orbitalVelSat, orbitalPeriodSat);
             sc.close();
