@@ -61,11 +61,13 @@ public class OrbitalCalculator {
 
         DecimalFormat df = new DecimalFormat("0.000e0"); /*/ Scientific notation with 3 digits past the decimal 
         for the gravitational force. Zeros are placeholders for the digits*/
+
         df.setPositivePrefix(""); // Removes '+' sign for positive numbers
         df.setNegativePrefix("-"); // Adds '-' sign for negative numbers
 
         DecimalFormat velFormat = new DecimalFormat("0.000000"); /* Fixed 6 digits past the decimal notation format for 
         the orbital and escape velocities. Zeros are placeholders for the digits*/
+
         DecimalFormat perFormat = new DecimalFormat("0.000"); /* Fixed 3 digits past the decimal notation format for 
         the periods. Zeros are placeholders for the digits*/
 
@@ -85,6 +87,7 @@ public class OrbitalCalculator {
 
             System.out.print("Enter the mass of the planet (in kilograms): ");
             double massPlanet = sc.nextDouble(); // in kg, Planet's mass, user-defined
+
             if (massPlanet <= 0) {
                 System.out.println("Error: Planet mass must be greater than zero.");
                 return; // Exit the program if the mass is invalid
@@ -92,6 +95,7 @@ public class OrbitalCalculator {
 
             System.out.print("Enter the radius of the planet (in meters): ");
             double radiusPlanet = sc.nextDouble(); // in meters, Planet's radius, user-defined
+
             if (radiusPlanet <= 0) {
                 System.out.println("Error: Planet radius must be greater than zero.");
                 return; // Exit the program if the radius is invalid
@@ -99,6 +103,7 @@ public class OrbitalCalculator {
 
             System.out.print("Enter the mass of the satellite (in kilograms): ");
             double massSatellite = sc.nextDouble(); // in kg, Satellite's mass, user-defined
+            
             if (massSatellite <= 0) {
                 System.out.println("Error: Satellite mass must be greater than zero.");
                 return; // Exit the program if the mass is invalid
@@ -106,6 +111,7 @@ public class OrbitalCalculator {
 
             System.out.print("Enter the distance between the planet and the satellite/orbital altitude (in meters): ");
             double orbitalAlt = sc.nextDouble(); // in meters, Distance from the planet to the satellite AKA orbital altitude, user-defined
+            
             if (orbitalAlt <= 0) {
                 System.out.println("Error: Distance must be greater than zero.");
                 return; // Exit the program if the distance is invalid
