@@ -1,5 +1,5 @@
-import java.text.DecimalFormat; // Scanner class for user input
-import java.util.Scanner; // DecimalFormat class for formatting output
+import java.text.DecimalFormat; // DecimalFormat class for formatting output
+import java.util.Scanner; // Scanner class for user input
 
 
 public class OrbitalCalculator {
@@ -19,19 +19,20 @@ public class OrbitalCalculator {
     public double escapeVelocity(double mass, double Radius) { // Radius = radius of the planet
         return Math.sqrt((2 * (G * mass)) / Radius);
     }
-
+  
     // Method to calculate orbital velocity at a given radius
-    public double orbitalVelocity(double mass, double radius) { // radius = orbital radius from the planet's center
-        return Math.sqrt((G * mass) / radius);
+    public double orbitalVelocity(double planetMass, double orbitalRadius) { // radius = orbital radius from the planet's center
+        return Math.sqrt((G * planetMass) / orbitalRadius);
     } 
 
     /*  Overloaded method to calculate orbital velocity at a given altitude above the planet's surface
     Overloaded methods have the same name but different parameters (type, number, or both).
     Which method is called is determined by the arguments inputted during the method call.
     */
-    public double orbitalVelocity(double centralBodyMass, double centralBodyRadius, double altitude) {
-        double orbitalRadius = centralBodyRadius + altitude;
-        return orbitalVelocity(centralBodyMass, orbitalRadius);
+    public double orbitalVelocity(double planetMass, double planetRadius, double altitude) {
+        double orbitalRadius = planetRadius + altitude;
+        System.out.println("planetmass: " + planetMass + " planetRadius: " + planetRadius + " altitude: " + altitude);
+        return orbitalVelocity(planetMass, orbitalRadius);
     }
 
     // Method to calculate orbital period using the given radius and mass
@@ -51,16 +52,16 @@ public class OrbitalCalculator {
      * Ment to calculate for the same parameters as the orbitalVelocity method
      * Shows and error if orbitalRadius isnt defined
     */
-    public double orbitalPeriod(double centralBodyMass, double centralBodyRadius, double altitude) {
-        double orbitalRadius = centralBodyRadius + altitude;
-        return orbitalPeriod(centralBodyMass, orbitalRadius); 
+    public double orbitalPeriod(double planetMass, double planetRadius, double altitude) {
+        double orbitalRadius = planetRadius + altitude;
+        return orbitalPeriod(planetMass, orbitalRadius); 
         // ^ This automatically calls the other orbitalPeriod method and assigns the results to the arguments
     }
 
     public void output(double force, double velocity, double orbitalVel, double orbitalPer) {
 
-        DecimalFormat df = new DecimalFormat("0.000e0"); /*/ Scientific notation with 3 digits past the decimal 
-        for the gravitational force. Zeros are placeholders for the digits*/
+        DecimalFormat df = new DecimalFormat("0.000e0"); /* Scientific notation with 3 digits past the decimal 
+        for the gravitational force. Zeros are placeholders for the digits */
 
         df.setPositivePrefix(""); // Removes '+' sign for positive numbers
         df.setNegativePrefix("-"); // Adds '-' sign for negative numbers
@@ -126,7 +127,8 @@ public class OrbitalCalculator {
 
             double orbitalVelSat = calculator.orbitalVelocity(massPlanet, orbitalRad); // orbitalVelSat = Orbital Velocity of the satellite
 
-            double orbitalPeriodSat = calculator.orbitalPeriod(massPlanet, orbitalRad); // orbitalPeriodSat = Orbital Period of the satellite = 2π * orbital radius / orbital velocity
+            // Call the overloaded method directly with altitude, simplifying the code.
+            double orbitalPeriodSat = calculator.orbitalPeriod(massPlanet, radiusPlanet, orbitalAlt);
 
             calculator.output(force, escapeVel, orbitalVelSat, orbitalPeriodSat);
             sc.close();
