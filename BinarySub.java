@@ -1,112 +1,78 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class BinarySub {
     public static void main(String[] args) {
         try (Scanner sc = new Scanner(System.in)) {
-            boolean play = true;
-            while (play) {
-                System.out.println("\n--- New Binary Subtraction ---"
-                + "\n Enter two binary numbers to subtract."
-                + "\n Type 'Calculate' or press Enter on an empty line to proceed."
-                + "\n Or, type 'Exit' to quit the program.");
+            while (true) {
+                System.out.print("\n--- New Binary Subtraction ---"
+                + "Enter the binary numbers to subtract, one per line."
+                + "Type 'Calc' or press Enter on an empty line when you are done."
+                + "Or, type 'Exit' to quit the program.");  
 
-                // Get the first number (minuend)
-                System.out.print("Enter the first binary number: ");
-                String binary1 = sc.nextLine().trim();
+                List<String> binaryNumbers = new ArrayList<>();
 
-                /*
-                 *   .nextLine() is a String method that reads the next line of input from the user. 
-                 *   .trim() is another String method that removes any leading or trailing whitespace (basically spaces) from the input.
-                 */
+                while (true) {
+                    System.out.print("> ");
+                    String input = sc.nextLine().trim();
 
-                if (binary1.equalsIgnoreCase("exit")) {
-                    System.out.println("Exiting program... for now :]");
-                    return;
-                }
-                /*  String.equalIgnoreCase is a method that checks if the input is "exit". Ignoring case sensitivity
-                *     which means I can enter "EXIT", "exit", or "ExIt", etc. and it would still be the same "exit".
-                *       if not, returns a false.
-                */
+                    if (input.equalsIgnoreCase("exit")) {
+                        /*  String.equalIgnoreCase is a method that checks if the input is "exit". Ignoring case sensitivity
+                        *     which means I can enter "EXIT", "exit", or "ExIt", etc. and it would still be the same "exit".
+                        *       if not, returns a false.
+                        */
 
+                        System.out.println("Exiting program... for now :]");
+                        return; // Exit the program completely
+                    }
 
-                if (!binary1.matches("[01]+")) {
-                    System.out.println("Invalid input. Please enter a valid binary number (0s and 1s only).");
-                    continue;
-                }
-                /* Regex in detail:
-                *   [] - Characters inside the brackets to be compared with String.matches.
-                *   [01] - Characters inside the brackets that can only be 0 or 1. tldr: only allow 0 or 1
-                *   + - One or more repetitions of the character inside the brackets, basically if it repeats once or more
-                *
-                *   If all of these conditions are met, then the input is a valid binary number, thus returning a True boolean value 
-                * that can be modified with NOT.
-                 */
+                    if (input.isEmpty() || input.equalsIgnoreCase("calc")) {
+                        if (binaryNumbers.size() < 2) {
+                            System.out.println("Tsk. Enter at least two numbers to perform a calculation. Again.");
+                        }
+                        break; // Exits input loop to perform calculation
+                    }
 
-
-                // Geting the second number (subtrahend)
-                System.out.print("Enter the second binary number: ");
-                String binary2 = sc.nextLine().trim();
-
-                /* Again,
-                 *   .nextLine() is a String method that reads the next line of input from the user. 
-                 *   .trim() is another String method that removes any leading or trailing whitespace (basically spaces) from the input.
-                 */
-
-                if (binary2.equalsIgnoreCase("exit")) {
-                    System.out.println("Exiting program... for now :]");
-                    return;
+                    // Input validation
+                    if (!input.matches("[01]+")) {
+                        System.out.println("Invalid input. Please enter a valid binary number (0s and 1s only).");
+                        continue; // Asks for a new number
+                    }
+                    binaryNumbers.add(input);
                 }
 
-                if (!binary2.matches("[01]+")) { // Checks if the input is a valid binary number using the regex
-                    System.out.println("Invalid input. Please enter a valid binary number (0s and 1s only).");
-                    continue;
+                if (binaryNumbers.size() < 2) {
+                    continue; // Not enough numbers, start a new calculation session
                 }
 
-                /* Regex in detail:
-                *   [] - Characters inside the brackets to be compared with String.matches.
-                *   [01] - Characters inside the brackets that can only be 0 or 1. tldr: only allow 0 or 1
-                *   + - One or more repetitions of the character inside the brackets, basically if it repeats once or more
-                *
-                *   If all of these conditions are met, then the input is a valid binary number, thus returning a True boolean value 
-                * that can be modified with NOT.
-                 */
-
-                // Perform binary subtraction
-                String difference = subtractBinary(binary1, binary2);
+                // Perform binary subtraction using the rules
+                String difference = binaryNumbers.get(0);
+                for (int i = 1; i < binaryNumbers.size(); i++) {
+                    difference = subtractBinary(difference, binaryNumbers.get(i));
+                }
 
                 // Print the results
                 System.out.println("\n--- Calculation ---");
-                System.out.println("  " + binary1);
-                System.out.println("- " + binary2);
+                for (int i = 0; i < binaryNumbers.size(); i++) {
+                    System.out.println((i == 0 ? "  " : "- ") + binaryNumbers.get(i));
+                }
                 System.out.println("--------------------");
                 System.out.println("= " + difference + " (Binary)");
 
                 // For verification, also show the decimal conversion
                 try {
-                    long decimal1 = Long.parseLong(binary1, 2);
-                    long decimal2 = Long.parseLong(binary2, 2);
-                    System.out.println("= " + (decimal1 - decimal2) + " (Decimal)");
+                    long decimalDifference = Long.parseLong(binaryNumbers.get(0), 2);
+                    for (int i = 1; i < binaryNumbers.size(); i++) {
+                        decimalDifference -= Long.parseLong(binaryNumbers.get(i), 2);
+                    }
+                    System.out.println("= " + decimalDifference + " (Decimal)");
                 } catch (NumberFormatException e) {
                     System.out.println("(Decimal value is too large to display as a standard integer)");
                 }
-
-                System.out.println("\nType 'Calculate' or press Enter on an empty line to proceed.");
-                System.out.println("Or, type 'Exit' to quit the program.");
-
-                // Wait for the user to press Enter
-                sc.nextLine();
-                String exitChoice = sc.nextLine().trim();
-                if (exitChoice.equalsIgnoreCase("exit")) {
-                    System.out.println("Exiting program... for now :]");
-                    play = false;
-                }
-                // If the user types anything else, the loop continues.
-                // No need for an else block here, as the loop naturally continues if 'play' is still true.
-
             }
         } catch (Exception e) {
             System.out.println("An unexpected error occurred: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -118,7 +84,7 @@ public class BinarySub {
      * @return The difference as a binary string. Can be negative.
      */
     public static String subtractBinary(String b1, String b2) {
-        // To perform A - B, we calculate A + (Two's Complement of B).
+        // To perform b1 - b2, we calculate b1 + (Two's Complement of b2).
         // The number of bits should be one more than the max length to handle the sign.
         int len = Math.max(b1.length(), b2.length()) + 1;
 

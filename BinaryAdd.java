@@ -57,12 +57,12 @@ public class BinaryAdd {
                 }
 
                 // Print the results
-                System.out.println("\n--- Calculation ---");
+                System.out.println("\n--- Calculation ---"); 
                 for (int i = 0; i < binaryNumbers.size(); i++) {
                     System.out.println((i == 0 ? "  " : "+ ") + binaryNumbers.get(i));
                 }
 
-                System.out.println("--------------------");
+                System.out.println("--------------------");  // Lines  
                 System.out.println("= " + totalSum + " (Binary)");
 
                 // For verification, also show the decimal conversion
@@ -91,9 +91,12 @@ public class BinaryAdd {
         // Loop from right to left, adding bits and handling carry
         while (i >= 0 || j >= 0 || carry > 0) {
             int sum = carry;
-            if (i >= 0) sum += binary1.charAt(i--) - '0'; // Convert char '1' to int 1
-            if (j >= 0) sum += binary2.charAt(j--) - '0';
-
+            if (i >= 0) {
+                sum += binary1.charAt(i--) - '0'; // Convert char '1' to int 1
+        }
+            if (j >= 0) {
+                sum += binary2.charAt(j--) - '0';
+            }
             result.insert(0, sum % 2); // Insert the resulting bit (0 or 1) at the beginning
             carry = sum / 2; // Calculates the new carry (0 or 1)
         }
