@@ -32,8 +32,8 @@ def play_game():
     computer_choice_num = random.randint(1, 6)
 
     # Disable button during animation
-    play_button.config(state=tk.DISABLED)
-    entry.config(state=tk.DISABLED)
+    play_button.config(state="disabled")
+    entry.config(state="disabled")
 
     # Start the "thinking" animation
     animate_thinking(1, player_choice_num, computer_choice_num)
@@ -83,28 +83,32 @@ def display_result_sequentially(player_num, computer_num, step=1):
     elif step == 3:
         # Add the final result and re-enable widgets
         result_label.config(text=f"{line1}\n{line2}\n{result}")
-        play_button.config(state=tk.NORMAL)
-        entry.config(state=tk.NORMAL)
+        play_button.config(state="normal")
+        entry.config(state="normal")
         entry.delete(0, tk.END)
 
 
 # --- GUI Setup ---
 root = tk.Tk()
-root.title("Rock Paper Scissors")
-root.geometry("400x300")
-root.resizable(False, False)
-root.configure(bg="#2E2E2E")
+root.title("AWS Learning Club -- NU Cebu Chapter")
+root.geometry("800x600") # Start with a standard size instead of fullscreen
+root.resizable(True, True)
+root.configure(bg="#0d6666")
 
-instruction_label = tk.Label(root, text="Enter rock, paper, or scissors:", fg="white", bg="#2E2E2E", font=("Arial", 14))
+# Create a central frame to hold all the widgets
+main_frame = tk.Frame(root, bg="#0d6666")
+main_frame.place(relx=0.5, rely=0.5, anchor="center")
+
+instruction_label = tk.Label(main_frame, text="Enter rock, paper, or scissors:", fg="white", bg="#0d6666", font=("Arial", 14))
 instruction_label.pack(pady=(20, 5))
 
-entry = tk.Entry(root, font=("Arial", 14), width=20, justify='center')
+entry = tk.Entry(main_frame, font=("Arial", 14), width=20, justify='center')
 entry.pack(pady=5)
 
-play_button = tk.Button(root, text="Play", font=("Arial", 14), command=play_game, width=10)
+play_button = tk.Button(main_frame, text="Play", font=("Arial", 14), command=play_game, width=10)
 play_button.pack(pady=10)
 
-result_label = tk.Label(root, text="", fg="white", bg="#2E2E2E", font=("Arial", 16), height=3)
+result_label = tk.Label(main_frame, text="", fg="white", bg="#0d6666", font=("Arial", 16), justify="center", height=4)
 result_label.pack(pady=20)
 
 root.mainloop()
