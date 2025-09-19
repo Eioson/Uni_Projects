@@ -1,6 +1,6 @@
 
 public class ArrayTest {
-    public static void main(String[] args) {
+    public static void main(String[] sigma) {
         
         int n=10, m=10;
         
