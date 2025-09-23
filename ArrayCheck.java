@@ -3,39 +3,48 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
-
 public class ArrayCheck {
-    public static void main(String[] sigma) {
-        List<Integer> randomNumbers = new ArrayList<>();
-        Random rand = new Random();
+    public static void main(String[] args) {
+        
+        // -- Initializing --
+        List<Integer> randomNumbers = new ArrayList<>(); // Creates the list
+        Random rand = new Random(); // Initiates the random number generator
+        try(Scanner sc = new Scanner(System.in)){ // Initiates the scanner
 
-        for (int i = 0; i < 10; i++) {
-            randomNumbers.add(rand.nextInt(100));
-        }
+            for (int i = 0; i < 10; i++) { // Repeats 10 times
+                randomNumbers.add(rand.nextInt(1, 101)); // Appends the randomly set number to randomNumbers
+            }
 
-        try (Scanner sc = new Scanner(System.in)) {
-            System.out.println("A list of 10 random numbers (0-99) has been generated.");
-            System.out.print("Enter a number to search for: ");
-            int searchNum = sc.nextInt();
+            while (true) { 
+                System.out.print("""
+                    \nA list of 10 random numbers (0-100) has been generated.
+                    Take a guess at a number from that list.
+                    """);
+                System.out.print("\t> ");
+                String input = sc.nextLine();
 
-            boolean found = false;
-            int foundIndex = -1; // Use -1 is used to indicate not found
+                if (input.matches("\\d+")){ 
+                    /* Checks if the input is a number using the String.matches() method
+                    *  "\\d+" is a regular expression [regex] that matches any digit (0-9)
+                    *  \\ - is an escape character that is needed, else it wont work
+                    *  d - denotes a digit (0-9)
+                    *  + - One or more repetitions of the character inside the brackets, basically if it repeats once or more
+                    */
 
-            for (int i = 0; i < randomNumbers.size(); i++) {
-                if (randomNumbers.get(i) == searchNum) {
-                    found = true;
-                    foundIndex = i;
-                    break; // Number found, exit the loop immediately
+                    int sN = Integer.parseInt(input); //Parses the input into 
+
+                    if (randomNumbers.contains(sN)) { // Checks if randomNumbers contains sN
+                        System.out.print("The number " + sN + " is in the list.");
+                    } else {
+                        System.out.print("The number " + sN + " is not in the list.");
+                    }
+                    break;
+
+                } else { // Exception case if te user inputs something other than a number
+                    System.out.print("Invalid input. Please enter a valid number.\n");
                 }
+                
             }
-
-            if (found) {
-                System.out.println("Success! The number " + searchNum + " was found at index " + foundIndex + ".");
-            } else {
-                System.out.println("The number " + searchNum + " was not found in the list.");
-            }
-
-            System.out.println("The list was: " + randomNumbers);
         }
     }
 }

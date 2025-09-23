@@ -2,7 +2,7 @@
 public class ArrayTest {
     public static void main(String[] sigma) {
         
-        int n=10, m=10;
+        int n=11, m=11;
         
         int[][] arr= new int[n][m];
 
