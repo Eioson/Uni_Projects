@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -40,13 +39,13 @@ public class ArraysFinal {
                 sc.nextLine(); // Consume the newline character
 
                 switch (choice) {
-                    case 1 -> add(sc);
-                    case 2 -> remove(sc);
-                    case 3 -> view(sc);
-                    case 4 -> search(sc);
-                    case 5 -> sort();
-                    case 6 -> count();
-                    case 7 -> {
+                     case 1 -> add(sc);
+                     case 2 -> remove(sc);
+                     case 3 -> view(sc);
+                     case 4 -> search(sc);
+                     case 5 -> sort();
+                     case 6 -> count();
+                     case 7 -> {
                         System.out.println("\nExiting program. Goodbye!\n");
                         return;
                     }
@@ -152,7 +151,7 @@ public class ArraysFinal {
             Thread.currentThread().interrupt(); 
         } // Pause for a second to let user see the updated list
 
-        System.out.print("Press Enter to continue");
+        System.out.print("Press Enter to continue.. ");
         sc.nextLine(); // Wait for user to press Enter
     }
 
@@ -160,8 +159,27 @@ public class ArraysFinal {
      * Searches for a number in the list.
      */
     public void search(Scanner sc) {
-        // Implementation for search would go here
-        System.out.println("Search functionality not implemented yet.");
+        if (numbers.isEmpty()) {
+            System.out.println("The list is empty. Nothing to search.");
+            return;
+        }
+        System.out.print("Enter the number you want to search for"
+        + "\n\t> ");
+
+        try {
+            int numToSearch = sc.nextInt();
+            sc.nextLine(); // Consume newline
+
+            if (numbers.contains(numToSearch)) {
+                int index = numbers.indexOf(numToSearch); // Use indexOf to find the index of the value.
+                System.out.printf("\n%d is found in the list at index %d.\n", numToSearch, index);
+            } else {
+                System.out.printf("\n%d was not found in the list.\n", numToSearch);
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter a whole number.");
+            sc.nextLine(); // Clear invalid input
+        }
     }
 
     /**
@@ -172,16 +190,47 @@ public class ArraysFinal {
             System.out.println("The list is empty. Nothing to sort.");
             return;
         }
-        Collections.sort(numbers);
-        System.out.println("\nThe list has been sorted in ascending order." 
-        + "/t"+ numbers);  
 
+        // --- Bubble Sort Implementation ---
+        int n = numbers.size(); // Size of the list
+        boolean swapped;    // Flag to track if a swap occurred in a pass
+
+        // Outer loop for each pass, i represents the number of passes
+        for (int i = 0; i < n - 1; i++) {
+            swapped = false;
+            // Inner loop for comparing and swapping adjacent elements, j represents the current index
+            for (int j = 0; j < n - 1 - i; j++) {
+                // Compare adjacent elements
+                if (numbers.get(j) > numbers.get(j + 1)) {
+                    // Swap them if they are in the wrong order
+                    int temp = numbers.get(j);
+                    // Temporary variable to hold one of the values during the swap
+
+                    numbers.set(j, numbers.get(j + 1));
+                    // Swap the values
+                    numbers.set(j + 1, temp);
+                    // Replacesa the other value with the temp variable
+
+                    swapped = true; // Indicates a swap occurred in this pass
+                }
+            }
+            // OPTIMIZATION: If no elements were swapped in a pass, the list is already sorted.
+            if (!swapped) {
+                break;
+            }
+        }
+        // --- End of Bubble Sort ---
+
+        System.out.println("\nThe list has been sorted in ascending order using Bubble Sort.");
+        System.out.println("Sorted list: " + numbers);
+
+        // The pause is now part of the view() method, so we can remove it from here for consistency.
         try { // Try-catch to handle potential InterruptedException
             System.out.println("Your list is now: " + numbers);
-            Thread.sleep(1750); // Stops for 1.75 seconds so the user can see the updated list
+            Thread.sleep(750); // Stops for 1.75 seconds so the user can see the updated list
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); 
-        } // Pause for a second to let user see the updated list
+        } // Pauses for a second to let user see the updated list
     }
 
     /**
@@ -191,8 +240,15 @@ public class ArraysFinal {
         if (numbers.isEmpty()) {
             System.out.println("The list is empty. Nothing to count.");
         } else {
-            System.out.println("The list is: " + numbers
-            + "\nThe list contains " + numbers.size() + " element(s).");
+            System.out.printf("\nThe list is: " + numbers
+            + "\nThe list contains %d element(s).\n", numbers.size());
         } 
+
+        try { // Try-catch to handle potential InterruptedException
+            System.out.println("Your list is now: " + numbers);
+            Thread.sleep(1750); // Stops for 1.75 seconds so the user can see the updated list
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); 
+        } // Pause for a second to let user see the updated list
     }
 }
