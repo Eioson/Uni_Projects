@@ -6,6 +6,8 @@ import java.util.Scanner;
 public class ArraysFinal {
     // This list will hold the numbers for our operations.
     private final List<Integer> numbers = new ArrayList<>();
+    // The maximum capacity for the list. It will be set by the user.
+    private int maxCapacity = 0;
     // The scanner is passed to methods that need it.
 
     public static void main(String[] sigma) {
@@ -44,7 +46,7 @@ public class ArraysFinal {
                      case 3 -> view(sc);
                      case 4 -> search(sc);
                      case 5 -> sort();
-                     case 6 -> count();
+                     case 6 -> count(sc);
                      case 7 -> {
                         System.out.println("\nExiting program. Goodbye!\n");
                         return;
@@ -59,22 +61,82 @@ public class ArraysFinal {
         }
     }
 
+
+    
+    /*
+     * Helper method to help pause execution for a specified duration.
+     */
+    private void pause(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.out.println("Pause was interrupted.");
+        }
+    }
+
     /**
      * Adds a number to the list.
      */
     public void add(Scanner sc) {
+        // If capacity is not set yet, prompt the user to set it.
+        if (maxCapacity == 0) {
+            while (true) { // Loop until a valid capacity is entered
+                System.out.print("Set the maximum size for the list (positive whole number)"
+                + "\n\t> ");
+                try {
+                    int capacityInput = Integer.parseInt(sc.nextLine());
+                    if (capacityInput > 0) {
+                        maxCapacity = capacityInput;
+                        System.out.printf("Maximum capacity set to %d.\n", maxCapacity);
+                        break;
+                    }
+                    System.out.println("Capacity must be a positive number.");
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a whole number.");
+                }
+            }
+        }
+
+        if (numbers.size() >= maxCapacity) {
+            System.out.printf("The list is full (max capacity: %d). Cannot add more numbers.\n", maxCapacity);
+            return;
+        }
+
+        int remainingCapacity = maxCapacity - numbers.size();
+
         int count;
         while (true) {
             System.out.print("How many numbers do you want to add?"
             + "\n\t> ");
+
             String line = sc.nextLine();
+
             try {
                 count = Integer.parseInt(line);
-                if (count > 0) {
-                    break; // Valid number, exit loop
+                if (count > 0) { // Check if the count is positive
+                        if (count <= remainingCapacity) { // Check if the count is within capacity
+                            break; // If it is a valid count value and within capacity, exit loop
+                        }
+
+                        System.out.printf("You can only add up to %d more numbers.\n", remainingCapacity);
+                        try {
+                            Thread.sleep(200); // delays for 0.2 seconds before re-prompting
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+
+                } else{
+                    System.out.printf("Please enter a number equal to or less than %d.\n\n", remainingCapacity);
+                    try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
                 }
-                System.out.println("Please enter a number greater than 0.");
-            } catch (NumberFormatException e) {
+            } 
+            
+            catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a whole number.");
             }
         }
@@ -109,32 +171,77 @@ public class ArraysFinal {
             System.out.println("The list is empty. Nothing to remove.");
             return;
         }
-        System.out.print("Enter the number you want to remove"
-        + "\n\t> ");
+
+        System.out.print("Enter the number you want to remove\n\t> ");
         try {
             Integer numToRemove = sc.nextInt(); // Read as Integer object
             sc.nextLine(); // Consume newline
 
-            // The .remove(Object) method removes the first occurrence of the value.
-            // It returns true if the element was found and removed, false otherwise.
-            if (numbers.remove(numToRemove)) {
-                System.out.println("\n"+ numToRemove + " has been removed from the list.");
-                try { // Try-catch to handle potential InterruptedException
-                    System.out.println("\tYour list is now: " + numbers);
-                    Thread.sleep(1250); // Stops for 1.75 seconds so the user can see the updated list
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt(); 
-                } // Pause for a second to let user see the updated list
-            } else {
-                System.out.println(numToRemove + " was not found in the list.");
+            // Find all indices where the number appears.
+            List<Integer> indices = new ArrayList<>();
+            for (int i = 0; i < numbers.size(); i++) {
+                if (numbers.get(i).equals(numToRemove)) {
+                    indices.add(i);
+                }
             }
+
+            // Case 1: The number was not found.
+            if (indices.isEmpty()) {
+                System.out.println("\n" + numToRemove + " was not found in the list.");
+            // Case 2: Exactly one occurrence was found.
+            } else if (indices.size() == 1) {
+                numbers.remove(numToRemove); // Simple removal
+                System.out.println("\n" + numToRemove + " has been removed from the list.");
+            // Case 3: Duplicates were found.
+            } else {
+                System.out.printf("\nFound multiple occurrences of %d at indices: %d\n", numToRemove,indices);
+                System.out.println("What would you like to do?"
+                + "  1. Remove a specific one by index."
+                + "  2. Remove ALL occurrences of this number."
+                + "  3. Cancel.");
+                System.out.print("\t> ");
+
+                String choice = sc.nextLine();
+                switch (choice) {
+                    case "1":
+                        System.out.print("Enter the index you want to remove: ");
+                        try {
+                            int indexToRemove = Integer.parseInt(sc.nextLine());
+                            if (indices.contains(indexToRemove)) {
+                                numbers.remove(indexToRemove);
+                                System.out.println("\nRemoved " + numToRemove + " at index " + indexToRemove + ".");
+                            } else {
+                                System.out.println("\nInvalid index. That index does not contain the number " + numToRemove + ".");
+                            }
+                        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+                            System.out.println("\nInvalid index provided.");
+                        }
+                        break;
+                    case "2":
+                        // Use removeAll with a list containing just the number to remove.
+                        numbers.removeAll(List.of(numToRemove));
+                        System.out.println("\nAll occurrences of " + numToRemove + " have been removed.");
+                        break;
+                    case "3":
+                        System.out.println("\nRemoval cancelled.");
+                        return; // Exit without showing the list again
+                    default:
+                        System.out.println("\nInvalid choice. No action taken.");
+                        return;
+                }
+            }
+
+            // Show the updated list after a successful removal.
+            System.out.println("\tYour list is now: " + numbers);
+            pause(1250);
+
         } catch (InputMismatchException e) {
             System.out.println("Invalid input. Please enter a whole number.");
             sc.nextLine(); // Clear invalid input
         }
     }
 
-    /*
+    /**
      * Displays the current list of numbers.
      */
     public void view(Scanner sc) {
@@ -144,13 +251,7 @@ public class ArraysFinal {
             System.out.println("Current list: " + numbers);
         }
 
-        try { // Try-catch to handle potential InterruptedException
-            System.out.println("Your list is now: " + numbers);
-            Thread.sleep(750); // Stops for 750 miliseconds so the user can analyze the list
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); 
-        } // Pause for a second to let user see the updated list
-
+        pause(750); // Pause so the user can see the list
         System.out.print("Press Enter to continue.. ");
         sc.nextLine(); // Wait for user to press Enter
     }
@@ -224,31 +325,64 @@ public class ArraysFinal {
         System.out.println("\nThe list has been sorted in ascending order using Bubble Sort.");
         System.out.println("Sorted list: " + numbers);
 
-        // The pause is now part of the view() method, so we can remove it from here for consistency.
-        try { // Try-catch to handle potential InterruptedException
-            System.out.println("Your list is now: " + numbers);
-            Thread.sleep(750); // Stops for 1.75 seconds so the user can see the updated list
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); 
-        } // Pauses for a second to let user see the updated list
+        pause(750);
     }
 
     /**
      * Counts and displays the number of elements in the list.
      */
-    public void count() {
-        if (numbers.isEmpty()) {
-            System.out.println("The list is empty. Nothing to count.");
-        } else {
-            System.out.printf("\nThe list is: " + numbers
-            + "\nThe list contains %d element(s).\n", numbers.size());
-        } 
+    public void count(Scanner sc) {
+        
+        System.out.print("\nWould you like to: "
+        + "\n  1. Count all elements in the list."
+        + "\n  2. Count occurrences of a specific number.");
+        System.out.print("\n\t> ");
 
-        try { // Try-catch to handle potential InterruptedException
-            System.out.println("Your list is now: " + numbers);
-            Thread.sleep(1750); // Stops for 1.75 seconds so the user can see the updated list
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); 
-        } // Pause for a second to let user see the updated list
+        String choice = sc.nextLine();
+        switch (choice) {
+            case "1":
+                if (numbers.isEmpty()) {
+                    System.out.println("The list is empty. Nothing to count.");
+                } else {
+                    System.out.printf("\nThe list is: " + numbers
+                    + "\nThe list contains %d element(s).\n", numbers.size());
+                }
+                break;
+            case "2":
+                    System.out.print("Enter the number you want to count: ");
+                    try{ 
+                        Integer CountNum = sc.nextInt();
+                        sc.nextLine();
+
+                        // Find all indices where the number appears.
+                        List<Integer> indices = new ArrayList<>();
+                        for (int i = 0; i < numbers.size(); i++) {
+                            if (numbers.get(i).equals(CountNum)) {
+                                indices.add(i);
+                            }
+                        }
+
+                        // Case 1: The number was not found.
+                        if (indices.isEmpty()) {
+                            System.out.println("\n" + CountNum + " was not found in the list.");
+                        // Case 2: Exactly one occurrence was found.
+                        } else if (indices.size() == 1) {
+                            System.out.printf("\nFound one occurrence of %d at index: [%d]\n", CountNum, indices.get(0));
+                        // Case 3: Duplicates were found.
+                        } else {
+                            System.out.printf("\nFound %d occurrences of %d at indices: %s\n", indices.size(), CountNum, indices);
+                            break;
+                        }
+                    } catch (InputMismatchException e) {
+                        System.out.println("Invalid input. Please enter a whole number.");
+                        sc.nextLine(); // Clear invalid input
+                    }
+                    break;
+                    
+            default:
+                System.out.println("Invalid choice. No action taken.");
+        }
+
+        pause(1750);
     }
 }
